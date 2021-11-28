@@ -1275,9 +1275,9 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 	bool useOriginal = _clippingArea.contains(Common::Rect(x, y, x + w, y + h));
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
-		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h
-		&& h > (Base::_shadowOffset + 1) * 2) {
+		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset < Base::_activeSurface->h
+		&& h > Base::_shadowOffset * 2) {
 		if (useOriginal) {
 			drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 		} else {
@@ -3132,6 +3132,9 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int sw = 0;
 
+	w -= 1;
+	h -= 1;
+
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
 	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
@@ -3196,6 +3199,9 @@ drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType co
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int sw = 0, sp = 0, hp = h * pitch;
 
+	w -= 1;
+	h -= 1;
+
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
 	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
@@ -3259,6 +3265,8 @@ drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType co
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	w -= 1;
+	h -= 1;
 	// Do not draw empty space rounded squares.
 	if (w <= 0 || h <= 0) {
 		return;
@@ -3331,6 +3339,8 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
+	w -= 1;
+	h -= 1;
 	// Do not draw empty space rounded squares.
 	if (w <= 0 || h <= 0) {
 		return;
@@ -3662,6 +3672,9 @@ void VectorRendererSpec<PixelType>::
 drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
+	w -= 1;
+	h -= 1;
+
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
 	uint8 expFactor = 3;
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
@@ -3752,6 +3765,9 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+
+	w -= 1;
+	h -= 1;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
 	uint8 expFactor = 3;
@@ -4042,6 +4058,9 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	frac_t T = 0, oldT;
 	uint8 a1, a2;
 
+	w -= 1;
+	h -= 1;
+
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
 	PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + h - r);
@@ -4118,8 +4137,8 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 template<typename PixelType>
 void VectorRendererAA<PixelType>::
 drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, VectorRenderer::FillMode fill_m) {
-	w -= 2*Base::_strokeWidth;
-	h -= 2*Base::_strokeWidth;
+	w -= 1 + 2*Base::_strokeWidth;
+	h -= 1 + 2*Base::_strokeWidth;
 
 	// Do not draw empty space rounded squares.
 	if (w <= 0 || h <= 0) {
